@@ -41,11 +41,10 @@ export default defineConfig({
         clientsClaim: true,
         skipWaiting: true,
 
-        // ❌ remove broad globPatterns
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Workbox will auto-handle build assets
 
         runtimeCaching: [
-          // ✅ HTML / Navigation (VERY IMPORTANT)
+          // HTML
           {
             urlPattern: ({ request }) => request.mode === 'navigate',
             handler: 'NetworkFirst',
@@ -54,36 +53,54 @@ export default defineConfig({
             }
           },
 
+          // ✅ JS & CSS (VERY IMPORTANT)
+          {
+            urlPattern: ({ request }) =>
+              request.destination === 'script' ||
+              request.destination === 'style',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'assets-cache'
+            }
+          },
+
+          // Images
+          {
+            urlPattern: ({ request }) => request.destination === 'image',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'image-cache',
+              expiration: {
+                maxEntries: 60,
+                maxAgeSeconds: 60 * 60 * 24 * 30
+              }
+            }
+          },
+
           // Google Fonts
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'google-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365
-              }
+              cacheName: 'google-fonts-cache'
             }
           },
 
-          // 🔥 Supabase APIs (correct strategy)
+          // Supabase APIs
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'supabase-cache',
-              networkTimeoutSeconds: 3,
+              networkTimeoutSeconds: 2,
               expiration: {
-                maxEntries: 50,
+                maxEntries: 30,
                 maxAgeSeconds: 60 * 5
               }
             }
           }
         ]
       }
-
-      // ❌ REMOVE devOptions completely
     })
   ]
 })

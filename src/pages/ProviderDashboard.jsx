@@ -2,9 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../services/supabaseClient";
 import { Link, useNavigate } from "react-router-dom";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 import "../styles/ProviderDashboard.css";
 import LocationPickerModal from "../components/LocationPickerModal";
 
@@ -522,7 +519,7 @@ function ProviderDashboard() {
       </div>
     </div>
 
-    {/* Navigation - rest stays the same */}
+    {/* Navigation -  */}
     <nav className="sidebar-nav">
       <button
         className={`nav-item ${
@@ -840,52 +837,54 @@ function OverviewTab({
         </div>
       )}
 
-      {/* Stats Grid */}
-      <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-icon primary">
-            <i className="bi bi-briefcase"></i>
-          </div>
-          <div className="stat-content">
-            <span className="stat-value">
-              {providerProfile?.total_jobs || 0}
-            </span>
-            <span className="stat-label">Total Jobs</span>
-          </div>
-        </div>
+     {/* Stats Grid */}
+<div className="stats-grid">
+  <div className="stat-card">
+    <div className="stat-icon primary">
+      <i className="bi bi-briefcase"></i>
+    </div>
+    <div className="stat-content">
+      <span className="stat-value">
+        {bookings.filter(b => b.status === 'completed').length}
+      </span>
+      <span className="stat-label">Total Jobs</span>
+    </div>
+  </div>
 
-        <div className="stat-card">
-          <div className="stat-icon warning">
-            <i className="bi bi-clock-history"></i>
-          </div>
-          <div className="stat-content">
-            <span className="stat-value">{stats.pending}</span>
-            <span className="stat-label">Pending</span>
-          </div>
-        </div>
+  <div className="stat-card">
+    <div className="stat-icon warning">
+      <i className="bi bi-clock-history"></i>
+    </div>
+    <div className="stat-content">
+      <span className="stat-value">{stats.pending}</span>
+      <span className="stat-label">Pending</span>
+    </div>
+  </div>
 
-        <div className="stat-card">
-          <div className="stat-icon info">
-            <i className="bi bi-gear"></i>
-          </div>
-          <div className="stat-content">
-            <span className="stat-value">{stats.active}</span>
-            <span className="stat-label">Active</span>
-          </div>
-        </div>
+  <div className="stat-card">
+    <div className="stat-icon info">
+      <i className="bi bi-gear"></i>
+    </div>
+    <div className="stat-content">
+      <span className="stat-value">{stats.active}</span>
+      <span className="stat-label">Active</span>
+    </div>
+  </div>
 
-        <div className="stat-card">
-          <div className="stat-icon success">
-            <i className="bi bi-star-fill"></i>
-          </div>
-          <div className="stat-content">
-            <span className="stat-value">
-              {providerProfile?.rating?.toFixed(1) || "0.0"}
-            </span>
-            <span className="stat-label">Rating</span>
-          </div>
-        </div>
-      </div>
+  <div className="stat-card">
+    <div className="stat-icon success">
+      <i className="bi bi-star-fill"></i>
+    </div>
+    <div className="stat-content">
+      <span className="stat-value">
+        {reviews.length > 0
+          ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+          : "0.0"}
+      </span>
+      <span className="stat-label">Rating ({reviews.length})</span>
+    </div>
+  </div>
+</div>
 
       {/* Quick Info Cards */}
       <div className="quick-info-grid">
